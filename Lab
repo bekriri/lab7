@@ -1,0 +1,41 @@
+CREATE TABLE flights (
+    flight_id SERIAL PRIMARY KEY,
+    flight_no VARCHAR(50),
+    scheduled_departure TIMESTAMP,
+    actual_departure TIMESTAMP,
+    departure_airport_id VARCHAR(50),
+    arrival_airport_id VARCHAR(50)
+);
+
+CREATE INDEX idx_flights_actual_departure ON flights (actual_departure);
+
+CREATE UNIQUE INDEX idx_flight_no_scheduled_departure ON flights (flight_no, scheduled_departure);
+
+CREATE INDEX idx_departure_arrival_airport ON flights (departure_airport_id, arrival_airport_id);
+
+EXPLAIN ANALYZE
+SELECT * FROM flights WHERE departure_airport_id = 'XYZ' AND arrival_airport_id = 'ABC';
+
+EXPLAIN ANALYZE
+SELECT * FROM flights WHERE departure_airport_id = 'XYZ' AND arrival_airport_id = 'ABC';
+
+CREATE TABLE Passengers (
+    passenger_id SERIAL PRIMARY KEY,
+    passport_number VARCHAR(50) UNIQUE,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    country_of_citizenship VARCHAR(100)
+);
+
+CREATE UNIQUE INDEX idx_passport_number ON Passengers (passport_number);
+
+INSERT INTO Passengers (passport_number, first_name, last_name) VALUES ('P123456', 'John', 'Doe');
+INSERT INTO Passengers (passport_number, first_name, last_name) VALUES ('P123457', 'Jane', 'Smith');
+
+CREATE INDEX idx_passenger_details ON Passengers (first_name, last_name, date_of_birth, country_of_citizenship);
+
+EXPLAIN ANALYZE
+SELECT * FROM Passengers
+WHERE country_of_citizenship = 'Philippines'
+AND date_of_birth = '1984-01-01';
